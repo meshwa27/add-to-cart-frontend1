@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Card</title>
+<script src="main.js"></script>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+    <h1>this is cart page</h1>
+    <div id="mainSection"></div>
+ 
+</body>
+</html>
+<script>
+    function Fetchdata() {
+    fetch("https://add-to-cart-backend-it46.onrender.com/cart")
+        .then((res) => res.json())
+        .then((data) =>{
+        console.log("fetched data:",data);
+            cardlist(data);
+            
+        } )
+        .catch((err) => console.log(err));
+}
+
+Fetchdata();
+
+function cardlist(data) {
+    const store = data.map((el) => 
+    card(el.id, el.image, el.title, el.price, el.founder, el.category,el.description)
+);
+const mainSection=document.getElementById("mainSection");
+mainSection.innerHTML=store.join("");
+   
+}
+
+function card(id, image, title, price, founder, category,description) {
+    let singlecard = `
+    <a href="description.html?title=${encodeURIComponent(title)}&image=${encodeURIComponent(image)}&price=${encodeURIComponent(price)}&founder=${encodeURIComponent(founder)}&category=${encodeURIComponent(category)}&id=${encodeURIComponent(id)}&description=${encodeURIComponent(description)}">
+    <div class="card" data-id="${id}">
+        <div class="card-img">
+            <img src="${image}" alt="">
+        </div>
+        <div class="card-body">
+            <h4 class="card-title">${title}</h4>
+            <p class="card-founder">Founder: ${founder}</p>
+            <p class="card-category">${category}</p>
+            <p class="price">${price}</p>
+            <a href="#" class="card-link" data-id="${id}">Edit</a>
+            <button class="card-button" data-id="${id}">Delete</button>
+        </div>
+    </div>
+    </a>
+    `;
+    return singlecard;
+}
+document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("card-button")) {
+        delteproduct(e.target.dataset.id)
+    }
+
+})
+
+function delteproduct(id) {
+    fetch(`https://add-to-cart-backend-it46.onrender.com/pitches/${id}`, {
+        method: "DELETE"
+    }).then((res) => res.json)
+        .then((data) => {
+            alert("deleted...")
+            console.log(data)
+        })
+        .catch((err) => console.log(err))
+}
+
+</script>
+<script src="main.js"></script>
